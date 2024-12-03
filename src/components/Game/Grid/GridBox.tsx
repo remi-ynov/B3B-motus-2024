@@ -1,8 +1,15 @@
 import React from 'react';
 
-const GridBox: React.FC = () => {
+interface Props {
+  letter: string;
+}
+
+const GridBox: React.FC<Props> = ({ letter }) => {
   return (
-    <div className="h-12 w-12 bg-blue-700 m-1">
+    <div className="h-12 w-12 bg-blue-700 m-1 text-white text-xl flex items-center justify-center">
+      <div>
+        {letter}
+      </div>
     </div>
   );
 };

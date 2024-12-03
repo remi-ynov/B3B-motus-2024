@@ -1,7 +1,3 @@
-
-// const symbols = '⌫↲';
-
-
 import Game from 'src/components/Game/Game.tsx';
 
 const App = () => {
