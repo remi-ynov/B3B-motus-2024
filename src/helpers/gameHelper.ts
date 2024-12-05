@@ -8,3 +8,10 @@ export const getLetterStateClasses = (letterState: LetterState) => {
   }
   return '';
 }
+
+export const formatWord = (word: string) => (
+  word
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toUpperCase()
+);
