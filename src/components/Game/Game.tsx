@@ -1,43 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import Title from 'src/components/Shared/Title.tsx';
 import Grid from 'src/components/Game/Grid/Grid.tsx';
 import Keyboard from 'src/components/Game/Keyboard/Keyboard.tsx';
 import { LetterState } from 'src/types/GameTypes.ts';
 import { NB_ATTEMPTS } from 'src/config/gameConfig.ts';
-import Message from 'src/components/Shared/Message.tsx';
-import { getRandomWord } from 'src/api/gameApi.ts';
-import Loader from 'src/components/Shared/Loader.tsx';
 import Button from 'src/components/Shared/Button.tsx';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import {
+  attemptsAtom,
+  currentAttemptAtom,
+  getWordAtom,
+  messageAtom,
+  numberGamesAtom,
+  resultsAtom
+} from 'src/atoms/gameAtoms.ts';
 
 const Game: React.FC = () => {
-  const [word, setWord] = useState('')
-  const [attempts, setAttempts] = useState<string[]>([]);
-  const [results, setResults] = useState<string[]>([]);
-  const [message, setMessage] = useState<string|null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const word = useAtomValue(getWordAtom);
+  const [attempts, setAttempts] = useAtom(attemptsAtom);
+  const [results, setResults] = useAtom(resultsAtom);
+  const currentAttempt = useAtomValue(currentAttemptAtom)
+  const [numberGames, setNumberGames] = useAtom(numberGamesAtom);
+  const setMessage = useSetAtom(messageAtom);
   const [gameFinished, setGameFinished] = useState<boolean>(false);
-  const currentAttempt = attempts[attempts.length - 1];
 
   useEffect(() => {
-    startGame()
-  }, []);
-
-  const startGame = () => {
-    setMessage(null)
-    setLoading(true)
-
-    getRandomWord()
-      .then((data) => {
-        setWord(data);
-        setAttempts([data.charAt(0)]);
-        setResults([]);
-      })
-      .catch((error) => setMessage(error.message))
-      .finally(() => {
-        setLoading(false)
-        setGameFinished(false)
-      });
-  }
+    if (word) {
+      setMessage(null);
+      setAttempts([word.charAt(0)]);
+      setResults([]);
+    }
+  }, [word]);
 
   const onKeyPress= (letter: string) => {
     setMessage(null)
@@ -104,24 +96,15 @@ const Game: React.FC = () => {
 
   return (
     <div>
-      <Title label="MOTUS" />
-      <Message content={message} />
-
-      {loading && <Loader />}
-      {word !== '' && (
-        <>
-          <Grid
-            length={word.length}
-            attempts={attempts}
-            results={results}
-          />
-          <Keyboard onKeyPress={onKeyPress} />
-        </>
-      )}
+      <Grid />
+      <Keyboard onKeyPress={onKeyPress} />
 
       {gameFinished && (
         <div className="items-center justify-center flex">
-          <Button label="Rejouer" onClick={startGame} />
+          <Button
+            label="Rejouer"
+            onClick={() => setNumberGames(numberGames + 1)}
+          />
         </div>
       )}
     </div>
