@@ -2,17 +2,25 @@ import React from 'react';
 import KeyboardRow from 'src/components/Game/Keyboard/KeyboardRow.tsx';
 
 const keyboardRows = [
-  'azertyuiop',
-  'qsdfghjklm',
-  'wxcvbn⌫↲',
-]
+  'AZERTYUIOP',
+  'QSDFGHJKLM',
+  'WXCVBN⌫↲',
+];
 
-const Keyboard: React.FC = () => {
+interface Props {
+  onKeyPress: (letter: string) => void;
+}
+
+const Keyboard: React.FC<Props> = ({ onKeyPress }) => {
   return (
     <div className="flex flex-col items-center">
         {
             keyboardRows.map((row) => (
-              <KeyboardRow key={row} letters={row} />
+              <KeyboardRow
+                key={row[0]}
+                letters={row}
+                onKeyPress={onKeyPress}
+              />
             ))
         }
     </div>
